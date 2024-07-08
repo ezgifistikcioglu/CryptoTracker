@@ -1,5 +1,6 @@
 package com.ezgieren.cryptotracker.dependencyInjection
 
+import com.ezgieren.cryptotracker.repository.CryptoRepository
 import com.ezgieren.cryptotracker.service.CoinGeckoApiService
 import com.ezgieren.cryptotracker.util.Constants
 import dagger.Module
@@ -13,6 +14,13 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
+    @Singleton
+    @Provides
+    fun provideCryptoRepository(
+        api: CoinGeckoApiService
+    ) = CryptoRepository(api)
+
     @Provides
     @Singleton
     fun provideCoinGeckoApiService(): CoinGeckoApiService {

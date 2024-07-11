@@ -28,7 +28,7 @@ class CryptoListViewModel @Inject constructor(
         fetchCryptoCurrencies()
     }
 
-    private fun fetchCryptoCurrencies() {
+     fun fetchCryptoCurrencies() {
         viewModelScope.launch {
             isLoading.value = true
             val result = repository.getCryptoList()

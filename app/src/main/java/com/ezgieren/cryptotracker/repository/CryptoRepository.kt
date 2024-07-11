@@ -1,6 +1,7 @@
 package com.ezgieren.cryptotracker.repository
 
 import com.ezgieren.cryptotracker.model.CryptoCurrency
+import com.ezgieren.cryptotracker.model.CryptoCurrencyItem
 import com.ezgieren.cryptotracker.service.CoinGeckoApiService
 import com.ezgieren.cryptotracker.util.Constants
 import com.ezgieren.cryptotracker.util.Resource
@@ -15,7 +16,16 @@ class CryptoRepository @Inject constructor(
         val response = try {
             apiService.getCryptoList(Constants.VS_CURRENCY)
         }catch (e: Exception){
-            return Resource.Error("Error!")
+            return Resource.Error("Error fetching crypto list.")
+        }
+        return Resource.Success(response)
+    }
+
+    suspend fun getCrypto(id: String): Resource<CryptoCurrencyItem> {
+        val response = try {
+            apiService.getCryptoDetail(id, Constants.VS_CURRENCY)
+        } catch (e: Exception) {
+            return Resource.Error("Error fetching crypto details.")
         }
         return Resource.Success(response)
     }

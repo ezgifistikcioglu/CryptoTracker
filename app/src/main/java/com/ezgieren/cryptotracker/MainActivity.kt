@@ -30,7 +30,8 @@ class MainActivity : ComponentActivity() {
                         CryptoListScreen(navController = navController)
                     }
 
-                    composable("crypto_detail_screen/{cryptoId}/{cryptoPrice}/{cryptoName}/{cryptoImage}",
+                    composable(
+                        "crypto_detail_screen/{cryptoId}/{cryptoPrice}/{cryptoName}/{cryptoImage}",
                         arguments = listOf(
                             navArgument("cryptoId") {
                                 type = NavType.StringType
@@ -44,7 +45,8 @@ class MainActivity : ComponentActivity() {
                             navArgument("cryptoImage") {
                                 type = NavType.StringType
                             }
-                        )) {
+                        )
+                    ) {
                         //CryptoDetailScreen
                         val cryptoId = remember { it.arguments?.getString("cryptoId") }
                         val cryptoPrice = remember { it.arguments?.getString("cryptoPrice") }
@@ -60,7 +62,6 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                 }
-
             }
         }
     }

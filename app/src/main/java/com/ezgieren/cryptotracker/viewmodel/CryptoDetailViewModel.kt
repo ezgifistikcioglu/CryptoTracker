@@ -1,7 +1,6 @@
 package com.ezgieren.cryptotracker.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.ezgieren.cryptotracker.model.CryptoCurrency
 import com.ezgieren.cryptotracker.model.CryptoCurrencyItem
 import com.ezgieren.cryptotracker.repository.CryptoRepository
 import com.ezgieren.cryptotracker.util.Resource

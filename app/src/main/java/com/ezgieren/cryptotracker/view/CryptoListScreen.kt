@@ -7,20 +7,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,16 +29,15 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.ezgieren.cryptotracker.model.CryptoCurrencyItem
-import com.ezgieren.cryptotracker.ui.theme.CryptoTrackerTheme
+import com.ezgieren.cryptotracker.util.BaseScaffold
 import com.ezgieren.cryptotracker.util.CustomText
 import com.ezgieren.cryptotracker.util.HorizontalSpacer
+import com.ezgieren.cryptotracker.util.RetryView
 import com.ezgieren.cryptotracker.util.Strings
 import com.ezgieren.cryptotracker.util.VerticalSpacer
 import com.ezgieren.cryptotracker.viewmodel.CryptoListViewModel
@@ -54,34 +49,25 @@ fun CryptoListScreen(
     navController: NavController,
     viewModel: CryptoListViewModel = hiltViewModel()
 ) {
-    CryptoTrackerTheme {
-        Surface(
-            color = MaterialTheme.colorScheme.background,
-            modifier = Modifier.fillMaxSize()
+    BaseScaffold(
+        title = Strings.appTitle,
+        onBackClick = null
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
         ) {
-            Column {
-                CustomText(
-                    text = Strings.appTitle,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 20.dp),
-                    textAlign = TextAlign.Center,
-                    fontSize = 44,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                VerticalSpacer(10)
-                SearchBar(
-                    hint = Strings.searchHint,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    viewModel.searchCryptoList(it)
-                }
-                VerticalSpacer(16)
-                CryptoList(navController = navController)
+            SearchBar(
+                hint = Strings.searchHint,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                viewModel.searchCryptoList(it)
             }
+            VerticalSpacer(16)
+            CryptoList(navController = navController)
         }
     }
 }
@@ -92,12 +78,8 @@ fun SearchBar(
     hint: String = "",
     onSearch: (String) -> Unit = {}
 ) {
-    var text by remember {
-        mutableStateOf("")
-    }
-    var isHintDisplayed by remember {
-        mutableStateOf(hint != "")
-    }
+    var text by remember { mutableStateOf("") }
+    var isHintDisplayed by remember { mutableStateOf(hint != "") }
 
     Box(modifier = modifier) {
         BasicTextField(
@@ -122,8 +104,7 @@ fun SearchBar(
             CustomText(
                 text = hint,
                 color = Color.LightGray,
-                modifier = Modifier
-                    .padding(horizontal = 20.dp, vertical = 12.dp)
+                modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)
             )
         }
     }
@@ -138,19 +119,18 @@ fun CryptoList(
     val errorMessage by remember { viewModel.errorMessage }
     val isLoading by remember { viewModel.isLoading }
 
-    CryptoListView(cryptos = cryptoList, navController = navController)
-
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier.fillMaxSize()
     ) {
         if (isLoading) {
             CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
-        }
-        if (errorMessage.isNotEmpty()) {
+        } else if (errorMessage.isNotEmpty()) {
             RetryView(error = errorMessage) {
                 viewModel.fetchCryptoCurrencies()
             }
+        } else {
+            CryptoListView(cryptos = cryptoList, navController = navController)
         }
     }
 }
@@ -163,7 +143,6 @@ fun CryptoListView(cryptos: List<CryptoCurrencyItem>, navController: NavControll
         }
     }
 }
-
 
 @Composable
 fun CryptoRow(navController: NavController, crypto: CryptoCurrencyItem) {
@@ -190,38 +169,21 @@ fun CryptoRow(navController: NavController, crypto: CryptoCurrencyItem) {
         HorizontalSpacer(10)
         Column {
             CustomText(
-                text = crypto.name ?: "none",
+                text = crypto.name ?: Strings.unknownText,
                 fontSize = 20,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
             )
             CustomText(
-                text = "${crypto.current_price} USD",
+                text = "${crypto.current_price} ${Strings.usdText}",
                 fontSize = 16,
                 color = MaterialTheme.colorScheme.onSurface
             )
             CustomText(
-                text = "Change: ${crypto.price_change_percentage_24h}%",
+                text = "${Strings.changeText}: ${crypto.price_change_percentage_24h}%",
                 fontSize = 14,
-                color = if (crypto.price_change_percentage_24h!! > 0) Color.Green else Color.Red
+                color = if ((crypto.price_change_percentage_24h ?: 0.0) > 0) Color.Green else Color.Red
             )
-        }
-    }
-}
-
-@Composable
-fun RetryView(
-    error: String,
-    onRetry: () -> Unit
-) {
-    Column {
-        CustomText(text = error, color = Color.Red, fontSize = 20)
-        VerticalSpacer(10)
-        Button(
-            onClick = { onRetry() },
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        ) {
-            CustomText(text = Strings.retryButton)
         }
     }
 }

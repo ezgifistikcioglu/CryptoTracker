@@ -106,4 +106,7 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.hilt.work)
     implementation(libs.androidx.work.runtime.ktx)
+
+    // Charts
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }

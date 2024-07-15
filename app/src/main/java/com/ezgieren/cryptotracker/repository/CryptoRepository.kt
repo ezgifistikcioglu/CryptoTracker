@@ -15,7 +15,8 @@ class CryptoRepository @Inject constructor(
     suspend fun getCryptoList(): Resource<CryptoCurrency> {
         val response = try {
             apiService.getCryptoList(Constants.VS_CURRENCY)
-        }catch (e: Exception){
+        } catch (e: Exception) {
+            e.printStackTrace()
             return Resource.Error("Error fetching crypto list.")
         }
         return Resource.Success(response)
@@ -25,6 +26,7 @@ class CryptoRepository @Inject constructor(
         val response = try {
             apiService.getCryptoDetail(id, Constants.VS_CURRENCY)
         } catch (e: Exception) {
+            e.printStackTrace()
             return Resource.Error("Error fetching crypto details.")
         }
         return Resource.Success(response)

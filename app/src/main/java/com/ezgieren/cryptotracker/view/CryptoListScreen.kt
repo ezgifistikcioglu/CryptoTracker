@@ -37,6 +37,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.ezgieren.cryptotracker.model.CryptoCurrencyItem
 import com.ezgieren.cryptotracker.ui.theme.CryptoTrackerTheme
@@ -180,7 +181,7 @@ fun CryptoRow(navController: NavController, crypto: CryptoCurrencyItem) {
             }
             .padding(10.dp),
         verticalAlignment = Alignment.CenterVertically
-    ){
+    ) {
         Image(
             painter = rememberImagePainter(crypto.image),
             contentDescription = null,
@@ -189,7 +190,7 @@ fun CryptoRow(navController: NavController, crypto: CryptoCurrencyItem) {
         HorizontalSpacer(10)
         Column {
             CustomText(
-                text = crypto.name,
+                text = crypto.name ?: "none",
                 fontSize = 20,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
@@ -202,7 +203,7 @@ fun CryptoRow(navController: NavController, crypto: CryptoCurrencyItem) {
             CustomText(
                 text = "Change: ${crypto.price_change_percentage_24h}%",
                 fontSize = 14,
-                color = if (crypto.price_change_percentage_24h > 0) Color.Green else Color.Red
+                color = if (crypto.price_change_percentage_24h!! > 0) Color.Green else Color.Red
             )
         }
     }

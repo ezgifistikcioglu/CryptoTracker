@@ -64,8 +64,7 @@ class CryptoListViewModel @Inject constructor(
                 return@launch
             }
             val results = listToSearch.filter {
-                it.name.contains(query.trim(), ignoreCase = true)
-            }
+                it.name?.contains(query.trim(), ignoreCase = true) == true            }
             if(isSearchStarting) {
                 initialCryptoList = cryptoList.value
                 isSearchStarting = false

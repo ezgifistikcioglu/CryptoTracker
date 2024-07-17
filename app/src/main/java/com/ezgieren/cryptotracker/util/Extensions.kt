@@ -75,7 +75,7 @@ fun AppBar(
         navigationIcon = {
             onBackClick?.let {
                 IconButton(onClick = it) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = Strings.backButton, tint = Color.White)
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = Constants.BACK_BUTTON, tint = Color.White)
                 }
             }
         },
@@ -101,7 +101,7 @@ fun RetryView(
             onClick = { onRetry() },
             modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
-            CustomText(text = Strings.retryButton)
+            CustomText(text = Constants.RETRY_BUTTON)
         }
     }
 }

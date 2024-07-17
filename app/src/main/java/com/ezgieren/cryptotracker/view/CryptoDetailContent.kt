@@ -1,5 +1,6 @@
 package com.ezgieren.cryptotracker.view
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -21,10 +22,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.ezgieren.cryptotracker.model.CryptoCurrencyItem
+import com.ezgieren.cryptotracker.util.Constants
 import com.ezgieren.cryptotracker.util.CustomText
-import com.ezgieren.cryptotracker.util.Strings
 import com.ezgieren.cryptotracker.util.VerticalSpacer
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.Description
@@ -32,8 +34,10 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 
+@OptIn(ExperimentalCoilApi::class)
+@SuppressLint("DefaultLocale")
 @Composable
-fun CryptoDetailContent(crypto: CryptoCurrencyItem, price: String, image: String) {
+fun CryptoDetailContent(crypto: CryptoCurrencyItem) {
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -49,7 +53,7 @@ fun CryptoDetailContent(crypto: CryptoCurrencyItem, price: String, image: String
                 .padding(16.dp)
         ) {
             Image(
-                painter = rememberImagePainter(data = image),
+                painter = rememberImagePainter(data = crypto.image),
                 contentDescription = crypto.name,
                 modifier = Modifier
                     .padding(16.dp)
@@ -58,7 +62,7 @@ fun CryptoDetailContent(crypto: CryptoCurrencyItem, price: String, image: String
                     .border(2.dp, Color.Gray, CircleShape)
             )
             CustomText(
-                text = crypto.name ?: Strings.unknownText,
+                text = crypto.name ?: Constants.UNKNOWN_TEXT,
                 fontSize = 24,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,
@@ -66,18 +70,19 @@ fun CryptoDetailContent(crypto: CryptoCurrencyItem, price: String, image: String
             )
             VerticalSpacer(8)
             CustomText(
-                text = "${Strings.priceText}: $price ${Strings.usdText}",
+                text = " ${crypto.marketData?.currentPrice}",
                 fontSize = 20,
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.secondary,
                 textAlign = TextAlign.Center
             )
             VerticalSpacer(8)
+
             CustomText(
-                text = "${Strings.changeText}: ${crypto.price_change_percentage_24h?.let { String.format("%.2f", it) } ?: "N/A"}%",
+                text = "${Constants.CHANGE_TEXT}: ${crypto.marketData?.priceChangePercentage24h?.let { String.format("%.2f", it) } ?: "N/A"}%",
                 fontSize = 18,
                 fontWeight = FontWeight.Normal,
-                color = if ((crypto.price_change_percentage_24h ?: 0.0) > 0) Color.Green else Color.Red,
+                color = if ((crypto.marketData?.priceChangePercentage24h ?: 0.0) > 0) Color.Green else Color.Red,
                 textAlign = TextAlign.Center
             )
             VerticalSpacer(16)
@@ -93,14 +98,14 @@ fun CryptoPriceChart() {
 
     AndroidView(factory = { context ->
         val chart = LineChart(context)
-        val dataSet = LineDataSet(entries, Strings.priceOverTime).apply {
+        val dataSet = LineDataSet(entries, Constants.PRICE_OVER_TIME).apply {
             color = android.graphics.Color.BLUE
             valueTextColor = android.graphics.Color.BLACK
             lineWidth = 2f
         }
         chart.data = LineData(dataSet)
         chart.description = Description().apply {
-            text = Strings.priceOverTime
+            text = Constants.PRICE_OVER_TIME
             textSize = 12f
         }
         chart

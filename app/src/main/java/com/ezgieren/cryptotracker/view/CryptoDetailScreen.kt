@@ -23,9 +23,6 @@ import com.ezgieren.cryptotracker.viewmodel.CryptoDetailViewModel
 @Composable
 fun CryptoDetailScreen(
     id: String,
-    price: String,
-    name: String,
-    image: String,
     navController: NavController,
     viewModel: CryptoDetailViewModel = hiltViewModel()
 ) {
@@ -34,7 +31,7 @@ fun CryptoDetailScreen(
     }
 
     BaseScaffold(
-        title = name,
+        title = "name",
         onBackClick = { navController.popBackStack() }
     ) { paddingValues ->
         Box(
@@ -47,7 +44,7 @@ fun CryptoDetailScreen(
             when (cryptoCurrencyItem) {
                 is Resource.Success -> {
                     val selectedCrypto = cryptoCurrencyItem.data!!
-                    CryptoDetailContent(selectedCrypto, price, image)
+                    CryptoDetailContent(selectedCrypto)
                 }
 
                 is Resource.Error -> {

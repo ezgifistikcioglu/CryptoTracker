@@ -5,12 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ezgieren.cryptotracker.model.CryptoCurrencyItem
 import com.ezgieren.cryptotracker.repository.CryptoRepository
+import com.ezgieren.cryptotracker.util.Currency
 import com.ezgieren.cryptotracker.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
 
 @HiltViewModel
 class CryptoListViewModel @Inject constructor(
@@ -20,6 +20,7 @@ class CryptoListViewModel @Inject constructor(
     var cryptoList = mutableStateOf<List<CryptoCurrencyItem>>(listOf())
     var errorMessage = mutableStateOf("")
     var isLoading = mutableStateOf(false)
+    var selectedCurrency = mutableStateOf(Currency.USD)
 
     private var initialCryptoList = listOf<CryptoCurrencyItem>()
     private var isSearchStarting = true
@@ -28,10 +29,10 @@ class CryptoListViewModel @Inject constructor(
         fetchCryptoCurrencies()
     }
 
-     fun fetchCryptoCurrencies() {
+    fun fetchCryptoCurrencies() {
         viewModelScope.launch {
             isLoading.value = true
-            val result = repository.getCryptoList()
+            val result = repository.getCryptoList(selectedCurrency.value.symbol)
             when (result) {
                 is Resource.Success -> {
                     val cryptoItems = result.data ?: emptyList()
@@ -51,21 +52,27 @@ class CryptoListViewModel @Inject constructor(
         }
     }
 
+    fun setCurrency(currency: Currency) {
+        selectedCurrency.value = currency
+        fetchCryptoCurrencies()
+    }
+
     fun searchCryptoList(query: String) {
-        val listToSearch = if(isSearchStarting) {
+        val listToSearch = if (isSearchStarting) {
             cryptoList.value
         } else {
             initialCryptoList
         }
         viewModelScope.launch(Dispatchers.Default) {
-            if(query.isEmpty()) {
+            if (query.isEmpty()) {
                 cryptoList.value = initialCryptoList
                 isSearchStarting = true
                 return@launch
             }
             val results = listToSearch.filter {
-                it.name?.contains(query.trim(), ignoreCase = true) == true            }
-            if(isSearchStarting) {
+                it.name?.contains(query.trim(), ignoreCase = true) == true
+            }
+            if (isSearchStarting) {
                 initialCryptoList = cryptoList.value
                 isSearchStarting = false
             }

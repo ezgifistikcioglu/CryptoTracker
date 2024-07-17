@@ -14,7 +14,6 @@ interface CoinGeckoApiService {
 
     @GET("coins/{id}")
     suspend fun getCryptoDetail(
-        @Path("id") id: String,
-        @Query("vs_currency") vsCurrency: String
+        @Path("id") id: String
     ): CryptoCurrencyItem
 }

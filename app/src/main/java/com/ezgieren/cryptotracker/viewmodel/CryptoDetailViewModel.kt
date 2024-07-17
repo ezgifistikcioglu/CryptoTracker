@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CryptoDetailViewModel @Inject constructor(
-   private val repository: CryptoRepository
+    private val repository: CryptoRepository
 ): ViewModel(){
 
     // suspend fonksiyon, kripto para detaylarını getirir

@@ -16,7 +16,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,17 +35,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.ezgieren.cryptotracker.model.CryptoCurrencyItem
 import com.ezgieren.cryptotracker.util.BaseScaffold
+import com.ezgieren.cryptotracker.util.Constants
+import com.ezgieren.cryptotracker.util.Currency
 import com.ezgieren.cryptotracker.util.CustomText
 import com.ezgieren.cryptotracker.util.HorizontalSpacer
 import com.ezgieren.cryptotracker.util.RetryView
-import com.ezgieren.cryptotracker.util.Strings
 import com.ezgieren.cryptotracker.util.VerticalSpacer
 import com.ezgieren.cryptotracker.viewmodel.CryptoListViewModel
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 
 @Composable
 fun CryptoListScreen(
@@ -50,7 +53,7 @@ fun CryptoListScreen(
     viewModel: CryptoListViewModel = hiltViewModel()
 ) {
     BaseScaffold(
-        title = Strings.appTitle,
+        title = Constants.APP_TITLE,
         onBackClick = null
     ) { paddingValues ->
         Column(
@@ -58,8 +61,9 @@ fun CryptoListScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
+            CurrencyDropdown(viewModel = viewModel)
             SearchBar(
-                hint = Strings.searchHint,
+                hint = Constants.SEARCH_HINT,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
@@ -68,6 +72,39 @@ fun CryptoListScreen(
             }
             VerticalSpacer(16)
             CryptoList(navController = navController)
+        }
+    }
+}
+
+@Composable
+fun CurrencyDropdown(viewModel: CryptoListViewModel) {
+    var expanded by remember { mutableStateOf(false) }
+    val currencies = Currency.entries
+    val selectedCurrency by remember { viewModel.selectedCurrency }
+
+    Box(modifier = Modifier.padding(16.dp)) {
+        Text(
+            text = selectedCurrency.name,
+            modifier = Modifier
+                .clickable { expanded = true }
+                .background(Color.LightGray)
+                .padding(8.dp)
+        )
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            currencies.forEach { currency ->
+                DropdownMenuItem(
+                    text = {
+                        CustomText(text =currency.name )
+                    },
+                    onClick = {
+                        viewModel.setCurrency(currency)
+                        expanded = false
+
+                    } )
+            }
         }
     }
 }
@@ -144,18 +181,16 @@ fun CryptoListView(cryptos: List<CryptoCurrencyItem>, navController: NavControll
     }
 }
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun CryptoRow(navController: NavController, crypto: CryptoCurrencyItem) {
-    val encodedName = URLEncoder.encode(crypto.name, StandardCharsets.UTF_8.toString())
-    val encodedImage = URLEncoder.encode(crypto.image, StandardCharsets.UTF_8.toString())
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(color = MaterialTheme.colorScheme.surface)
             .clickable {
                 navController.navigate(
-                    "crypto_detail_screen/${crypto.id}/${crypto.current_price}/$encodedName/$encodedImage"
+                    "crypto_detail_screen/${crypto.id}"
                 )
             }
             .padding(10.dp),
@@ -169,20 +204,20 @@ fun CryptoRow(navController: NavController, crypto: CryptoCurrencyItem) {
         HorizontalSpacer(10)
         Column {
             CustomText(
-                text = crypto.name ?: Strings.unknownText,
+                text = crypto.name ?: "None",
                 fontSize = 20,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
             )
             CustomText(
-                text = "${crypto.current_price} ${Strings.usdText}",
+                text = "${crypto.currentPrice ?: 0.0} ${Constants.USD_TEXT}",
                 fontSize = 16,
                 color = MaterialTheme.colorScheme.onSurface
             )
             CustomText(
-                text = "${Strings.changeText}: ${crypto.price_change_percentage_24h}%",
+                text = "Change: ${crypto.priceChangePercentage24h ?: 0.0}%",
                 fontSize = 14,
-                color = if ((crypto.price_change_percentage_24h ?: 0.0) > 0) Color.Green else Color.Red
+                color = if ((crypto.priceChangePercentage24h ?: 0.0) > 0) Color.Green else Color.Red
             )
         }
     }

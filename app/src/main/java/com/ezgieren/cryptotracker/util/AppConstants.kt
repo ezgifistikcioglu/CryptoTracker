@@ -1,17 +1,31 @@
 package com.ezgieren.cryptotracker.util
 
-object Constants {
+object AppConstants {
     const val BASE_URL = "https://api.coingecko.com/api/v3/"
     const val CALL_ATTRIBUTES = "id,name,logo_url,current_price,market_cap,market_cap_rank,total_volume,high_24h,low_24h,price_change_24h,price_change_percentage_24h,market_cap_change_24h,market_cap_change_percentage_24h,circulating_supply,total_supply,max_supply,ath,ath_change_percentage,ath_date,atl,atl_change_percentage,atl_date"
-    const val VS_CURRENCY = "usd"
+    const val Day = "Day"
     const val APP_TITLE = "Crypto Tracker"
     const val CHANGE_TEXT = "Change"
+    const val PRICE_CHANGE_24 = "Price Change Percentage 24h"
+    const val CURRENT_PRICE = "Current Price"
     const val PRICE_TEXT = "Price"
+    const val PRICE_AND_VOLUME = "Price and Volume Over Time"
     const val USD_TEXT = "USD"
     const val UNKNOWN_TEXT = "Unknown"
     const val SEARCH_HINT = "Search..."
     const val RETRY_BUTTON = "Retry"
     const val ERROR_TEXT = "An error occurred"
+    const val LEARN_MORE = "Learn more about"
     const val BACK_BUTTON = "Back"
     const val PRICE_OVER_TIME = "Price Over Time"
+    const val VOLUME_OVER_TIME = "Volume Over Time"
+    const val HOME_BUTTON = "Home"
+    const val CRYPTO_DETAILS = "crypto_details"
+    const val CRYPTO_LIST_SCREEN = "crypto_list_screen"
+    const val MARKET_CAP = "market_cap"
+    const val VOLUME_24H = "volume_24h"
+    const val CIRCULATING_SUPPLY  = "circulating_supply"
+    const val MAX_SUPPLY = "max_supply"
+    const val ATH = "ath"
+    const val ATL = "atl"
 }

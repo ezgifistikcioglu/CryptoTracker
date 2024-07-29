@@ -3,10 +3,12 @@ package com.ezgieren.cryptotracker.view
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -19,7 +21,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,22 +30,29 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.ezgieren.cryptotracker.model.CryptoCurrencyItem
-import com.ezgieren.cryptotracker.util.BaseScaffold
-import com.ezgieren.cryptotracker.util.Constants
+import com.ezgieren.cryptotracker.ui.theme.BackgroundColor
+import com.ezgieren.cryptotracker.ui.theme.DarkBlue
+import com.ezgieren.cryptotracker.ui.theme.Green
+import com.ezgieren.cryptotracker.ui.theme.RedErrorDark
+import com.ezgieren.cryptotracker.ui.theme.TextColor
+import com.ezgieren.cryptotracker.util.AppConstants
 import com.ezgieren.cryptotracker.util.Currency
-import com.ezgieren.cryptotracker.util.CustomText
-import com.ezgieren.cryptotracker.util.HorizontalSpacer
-import com.ezgieren.cryptotracker.util.RetryView
-import com.ezgieren.cryptotracker.util.VerticalSpacer
+import com.ezgieren.cryptotracker.util.extensions.BaseScaffold
+import com.ezgieren.cryptotracker.util.extensions.CustomBox
+import com.ezgieren.cryptotracker.util.extensions.CustomCard
+import com.ezgieren.cryptotracker.util.extensions.CustomText
+import com.ezgieren.cryptotracker.util.extensions.HorizontalSpacer
+import com.ezgieren.cryptotracker.util.extensions.RetryView
+import com.ezgieren.cryptotracker.util.extensions.VerticalSpacer
 import com.ezgieren.cryptotracker.viewmodel.CryptoListViewModel
 
 @Composable
@@ -53,25 +61,32 @@ fun CryptoListScreen(
     viewModel: CryptoListViewModel = hiltViewModel()
 ) {
     BaseScaffold(
-        title = Constants.APP_TITLE,
-        onBackClick = null
+        title = AppConstants.APP_TITLE,
+        onHomeClick = { navController.navigate("crypto_list_screen") }
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding(paddingValues.calculateStartPadding(LayoutDirection.Ltr))
+                .background(BackgroundColor)
         ) {
-            CurrencyDropdown(viewModel = viewModel)
-            SearchBar(
-                hint = Constants.SEARCH_HINT,
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                viewModel.searchCryptoList(it)
+                CurrencyDropdown(viewModel)
+                SearchBar(
+                    hint = AppConstants.SEARCH_HINT,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    viewModel.searchCryptoList(it)
+                }
             }
-            VerticalSpacer(16)
-            CryptoList(navController = navController)
+            VerticalSpacer(8.dp)
+            CryptoList(navController)
         }
     }
 }
@@ -79,16 +94,17 @@ fun CryptoListScreen(
 @Composable
 fun CurrencyDropdown(viewModel: CryptoListViewModel) {
     var expanded by remember { mutableStateOf(false) }
-    val currencies = Currency.entries
-    val selectedCurrency by remember { viewModel.selectedCurrency }
+    val currencies = Currency.values()
+    val selectedCurrency by viewModel.selectedCurrency
 
-    Box(modifier = Modifier.padding(16.dp)) {
-        Text(
+    CustomBox(modifier = Modifier.padding(2.dp)) {
+        CustomText(
             text = selectedCurrency.name,
             modifier = Modifier
                 .clickable { expanded = true }
-                .background(Color.LightGray)
-                .padding(8.dp)
+                .background(MaterialTheme.colorScheme.surface, CircleShape)
+                .padding(horizontal = 12.dp, vertical = 8.dp)
+                .shadow(5.dp, CircleShape)
         )
         DropdownMenu(
             expanded = expanded,
@@ -96,14 +112,12 @@ fun CurrencyDropdown(viewModel: CryptoListViewModel) {
         ) {
             currencies.forEach { currency ->
                 DropdownMenuItem(
-                    text = {
-                        CustomText(text =currency.name )
-                    },
+                    text = { CustomText(text = currency.name) },
                     onClick = {
                         viewModel.setCurrency(currency)
                         expanded = false
-
-                    } )
+                    }
+                )
             }
         }
     }
@@ -127,98 +141,101 @@ fun SearchBar(
             },
             maxLines = 1,
             singleLine = true,
-            textStyle = TextStyle(color = Color.Black),
+            textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground),
             modifier = Modifier
                 .fillMaxWidth()
                 .shadow(5.dp, CircleShape)
-                .background(Color.White, CircleShape)
-                .padding(horizontal = 20.dp, vertical = 12.dp)
-                .onFocusChanged {
-                    isHintDisplayed = it.isFocused != true && text.isEmpty()
-                }
+                .background(MaterialTheme.colorScheme.surface, CircleShape)
+                .padding(horizontal = 16.dp, vertical = 12.dp)
+                .onFocusChanged { isHintDisplayed = it.isFocused != true && text.isEmpty() }
         )
         if (isHintDisplayed) {
             CustomText(
                 text = hint,
-                color = Color.LightGray,
-                modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
             )
         }
     }
 }
 
 @Composable
-fun CryptoList(
-    navController: NavController,
-    viewModel: CryptoListViewModel = hiltViewModel()
-) {
+fun CryptoList(navController: NavController) {
+    val viewModel: CryptoListViewModel = hiltViewModel()
     val cryptoList by remember { viewModel.cryptoList }
     val errorMessage by remember { viewModel.errorMessage }
     val isLoading by remember { viewModel.isLoading }
 
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        if (isLoading) {
-            CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
-        } else if (errorMessage.isNotEmpty()) {
-            RetryView(error = errorMessage) {
-                viewModel.fetchCryptoCurrencies()
-            }
-        } else {
-            CryptoListView(cryptos = cryptoList, navController = navController)
+    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+        when {
+            isLoading -> CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+            errorMessage.isNotEmpty() -> RetryView(error = errorMessage) { viewModel.fetchCryptoCurrencies() }
+            else -> CryptoListView(cryptoList, navController, viewModel)
         }
     }
 }
 
 @Composable
-fun CryptoListView(cryptos: List<CryptoCurrencyItem>, navController: NavController) {
+fun CryptoListView(
+    cryptos: List<CryptoCurrencyItem>,
+    navController: NavController,
+    viewModel: CryptoListViewModel
+) {
     LazyColumn(contentPadding = PaddingValues(5.dp)) {
         items(cryptos) { crypto ->
-            CryptoRow(navController = navController, crypto = crypto)
+            CryptoRow(navController, crypto, viewModel)
         }
     }
 }
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
-fun CryptoRow(navController: NavController, crypto: CryptoCurrencyItem) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(color = MaterialTheme.colorScheme.surface)
-            .clickable {
-                navController.navigate(
-                    "crypto_detail_screen/${crypto.id}"
+fun CryptoRow(
+    navController: NavController,
+    crypto: CryptoCurrencyItem,
+    viewModel: CryptoListViewModel
+) {
+    val selectedCurrency by viewModel.selectedCurrency
+    CustomCard {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    navController.navigate("crypto_detail_screen/${crypto.id}/${selectedCurrency.symbol}")
+                }
+                .padding(10.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                painter = rememberImagePainter(crypto.image),
+                contentDescription = null,
+                modifier = Modifier.size(40.dp)
+            )
+            HorizontalSpacer(10.dp)
+            Column {
+                CustomText(
+                    text = crypto.name ?: "None",
+                    fontWeight = FontWeight.Bold,
+                    color = DarkBlue
+                )
+                CustomText(
+                    text = "${crypto.currentPrice ?: 0.0} ${selectedCurrency.symbol}",
+                    color = TextColor
+                )
+                CustomText(
+                    text = "Change: ${
+                        crypto.priceChangePercentage24h?.let {
+                            String.format(
+                                "%.2f",
+                                it
+                            )
+                        } ?: 0.0
+                    }%",
+                    color = if ((crypto.priceChangePercentage24h
+                            ?: 0.0) > 0
+                    ) Green else RedErrorDark
                 )
             }
-            .padding(10.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Image(
-            painter = rememberImagePainter(crypto.image),
-            contentDescription = null,
-            modifier = Modifier.size(40.dp)
-        )
-        HorizontalSpacer(10)
-        Column {
-            CustomText(
-                text = crypto.name ?: "None",
-                fontSize = 20,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
-            )
-            CustomText(
-                text = "${crypto.currentPrice ?: 0.0} ${Constants.USD_TEXT}",
-                fontSize = 16,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            CustomText(
-                text = "Change: ${crypto.priceChangePercentage24h ?: 0.0}%",
-                fontSize = 14,
-                color = if ((crypto.priceChangePercentage24h ?: 0.0) > 0) Color.Green else Color.Red
-            )
         }
     }
 }

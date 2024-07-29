@@ -31,17 +31,22 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable(
-                        "crypto_detail_screen/{cryptoId}",
+                        "crypto_detail_screen/{cryptoId}/{currency}",
                         arguments = listOf(
                             navArgument("cryptoId") {
+                                type = NavType.StringType
+                            },
+                            navArgument("currency") {
                                 type = NavType.StringType
                             }
                         )
                     ) {
                         //CryptoDetailScreen
                         val cryptoId = remember { it.arguments?.getString("cryptoId") }
+                        val currency = remember { it.arguments?.getString("currency") }
                         CryptoDetailScreen(
                             id = cryptoId ?: "",
+                            currency = currency ?: "",
                             navController = navController
                         )
                     }

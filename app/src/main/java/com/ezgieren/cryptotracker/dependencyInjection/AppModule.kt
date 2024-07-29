@@ -2,7 +2,7 @@ package com.ezgieren.cryptotracker.dependencyInjection
 
 import com.ezgieren.cryptotracker.repository.CryptoRepository
 import com.ezgieren.cryptotracker.service.CoinGeckoApiService
-import com.ezgieren.cryptotracker.util.Constants
+import com.ezgieren.cryptotracker.util.AppConstants
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,7 +25,7 @@ object AppModule {
     @Singleton
     fun provideCoinGeckoApiService(): CoinGeckoApiService {
         return Retrofit.Builder()
-            .baseUrl(Constants.BASE_URL)
+            .baseUrl(AppConstants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(CoinGeckoApiService::class.java)

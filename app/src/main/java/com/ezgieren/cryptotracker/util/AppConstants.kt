@@ -2,7 +2,8 @@ package com.ezgieren.cryptotracker.util
 
 object AppConstants {
     const val BASE_URL = "https://api.coingecko.com/api/v3/"
-    const val CALL_ATTRIBUTES = "id,name,logo_url,current_price,market_cap,market_cap_rank,total_volume,high_24h,low_24h,price_change_24h,price_change_percentage_24h,market_cap_change_24h,market_cap_change_percentage_24h,circulating_supply,total_supply,max_supply,ath,ath_change_percentage,ath_date,atl,atl_change_percentage,atl_date"
+    const val CALL_ATTRIBUTES =
+        "id,name,logo_url,current_price,market_cap,market_cap_rank,total_volume,high_24h,low_24h,price_change_24h,price_change_percentage_24h,market_cap_change_24h,market_cap_change_percentage_24h,circulating_supply,total_supply,max_supply,ath,ath_change_percentage,ath_date,atl,atl_change_percentage,atl_date"
     const val Day = "Day"
     const val APP_TITLE = "Crypto Tracker"
     const val CHANGE_TEXT = "Change"
@@ -24,7 +25,7 @@ object AppConstants {
     const val CRYPTO_LIST_SCREEN = "crypto_list_screen"
     const val MARKET_CAP = "market_cap"
     const val VOLUME_24H = "volume_24h"
-    const val CIRCULATING_SUPPLY  = "circulating_supply"
+    const val CIRCULATING_SUPPLY = "circulating_supply"
     const val MAX_SUPPLY = "max_supply"
     const val ATH = "ath"
     const val ATL = "atl"

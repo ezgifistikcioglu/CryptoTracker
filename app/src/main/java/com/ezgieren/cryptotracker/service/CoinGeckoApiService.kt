@@ -1,7 +1,6 @@
 package com.ezgieren.cryptotracker.service
 
 import com.ezgieren.cryptotracker.model.CryptoCurrencyItem
-import com.ezgieren.cryptotracker.util.Currency
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query

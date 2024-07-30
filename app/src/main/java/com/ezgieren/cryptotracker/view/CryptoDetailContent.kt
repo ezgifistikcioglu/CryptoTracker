@@ -1,27 +1,61 @@
 package com.ezgieren.cryptotracker.view
 
 import android.widget.LinearLayout
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.*
-import androidx.compose.foundation.shape.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.*
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import coil.compose.rememberImagePainter
 import com.ezgieren.cryptotracker.model.CryptoCurrencyItem
-import com.ezgieren.cryptotracker.ui.theme.*
-import com.ezgieren.cryptotracker.util.*
-import com.ezgieren.cryptotracker.util.extensions.*
+import com.ezgieren.cryptotracker.ui.theme.AccentColor
+import com.ezgieren.cryptotracker.ui.theme.BackgroundColor
+import com.ezgieren.cryptotracker.ui.theme.OnPrimaryColor
+import com.ezgieren.cryptotracker.ui.theme.Pink40
+import com.ezgieren.cryptotracker.ui.theme.PrimaryColor
+import com.ezgieren.cryptotracker.ui.theme.SecondaryColor
+import com.ezgieren.cryptotracker.ui.theme.TextColor
+import com.ezgieren.cryptotracker.util.AppConstants
+import com.ezgieren.cryptotracker.util.Currency
+import com.ezgieren.cryptotracker.util.extensions.CustomCard
+import com.ezgieren.cryptotracker.util.extensions.CustomText
+import com.ezgieren.cryptotracker.util.extensions.VerticalSpacer
+import com.ezgieren.cryptotracker.util.extensions.formatWithCurrency
+import com.ezgieren.cryptotracker.util.extensions.getDoubleFormattedValue
+import com.ezgieren.cryptotracker.util.extensions.getLongFormattedValue
+import com.ezgieren.cryptotracker.util.extensions.paddingNormal
+import com.ezgieren.cryptotracker.util.extensions.paddingSmall
+import com.ezgieren.cryptotracker.util.extensions.paddingSymmetric
+import com.ezgieren.cryptotracker.util.extensions.toFormattedString
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.*
-import com.github.mikephil.charting.formatter.*
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import com.github.mikephil.charting.formatter.ValueFormatter
 
 @Composable
 fun CryptoDetailContent(crypto: CryptoCurrencyItem, selectedCurrency: Currency) {
@@ -76,7 +110,11 @@ fun CryptoDetailMainInfo(crypto: CryptoCurrencyItem, selectedCurrency: Currency)
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             CustomText(
-                text = "1 ${crypto.symbol?.uppercase()} = ${crypto.marketData?.currentPrice?.get(selectedCurrency.symbol.lowercase())?.toFormattedString() ?: "null"} ${selectedCurrency.symbol.uppercase()}",
+                text = "1 ${crypto.symbol?.uppercase()} = ${
+                    crypto.marketData?.currentPrice?.get(
+                        selectedCurrency.symbol.lowercase()
+                    )?.toFormattedString() ?: "null"
+                } ${selectedCurrency.symbol.uppercase()}",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = OnPrimaryColor,
@@ -90,12 +128,14 @@ fun CryptoDetailMainInfo(crypto: CryptoCurrencyItem, selectedCurrency: Currency)
         }
     }
 }
+
 @Composable
 fun CryptoPriceChart(crypto: CryptoCurrencyItem) {
     val prices = crypto.marketData?.currentPrice?.values?.toList() ?: listOf()
     val volumes = crypto.marketData?.totalVolume?.values?.toList() ?: listOf()
     val priceEntries = prices.mapIndexed { index, price -> Entry(index.toFloat(), price.toFloat()) }
-    val volumeEntries = volumes.mapIndexed { index, volume -> Entry(index.toFloat(), volume.toFloat()) }
+    val volumeEntries =
+        volumes.mapIndexed { index, volume -> Entry(index.toFloat(), volume.toFloat()) }
 
     AndroidView(
         factory = { context ->
@@ -112,7 +152,8 @@ fun CryptoPriceChart(crypto: CryptoCurrencyItem) {
                     textSize = 12f
                     setDrawGridLines(false)
                     granularity = 1f
-                    valueFormatter = IndexAxisValueFormatter(prices.indices.map { "${AppConstants.Day} $it" })
+                    valueFormatter =
+                        IndexAxisValueFormatter(prices.indices.map { "${AppConstants.Day} $it" })
                     setLabelCount(prices.size, true)
                     setDrawAxisLine(true)
                     axisLineColor = PrimaryColor.toArgb()
@@ -197,7 +238,8 @@ fun CryptoDetailInfoGrid(crypto: CryptoCurrencyItem, selectedCurrency: Currency)
         item {
             DetailCard(
                 label = AppConstants.CURRENT_PRICE,
-                value = crypto.marketData?.currentPrice.getDoubleFormattedValue(selectedCurrency.symbol).formatWithCurrency(selectedCurrency.symbol.uppercase())
+                value = crypto.marketData?.currentPrice.getDoubleFormattedValue(selectedCurrency.symbol)
+                    .formatWithCurrency(selectedCurrency.symbol.uppercase())
             )
         }
         item {
@@ -209,13 +251,15 @@ fun CryptoDetailInfoGrid(crypto: CryptoCurrencyItem, selectedCurrency: Currency)
         item {
             DetailCard(
                 label = AppConstants.MARKET_CAP,
-                value = crypto.marketData?.marketCap.getLongFormattedValue(selectedCurrency.symbol).formatWithCurrency(selectedCurrency.symbol.uppercase())
+                value = crypto.marketData?.marketCap.getLongFormattedValue(selectedCurrency.symbol)
+                    .formatWithCurrency(selectedCurrency.symbol.uppercase())
             )
         }
         item {
             DetailCard(
                 label = AppConstants.VOLUME_24H,
-                value = crypto.marketData?.totalVolume.getDoubleFormattedValue(selectedCurrency.symbol).formatWithCurrency(selectedCurrency.symbol.uppercase())
+                value = crypto.marketData?.totalVolume.getDoubleFormattedValue(selectedCurrency.symbol)
+                    .formatWithCurrency(selectedCurrency.symbol.uppercase())
             )
         }
         item {
@@ -233,13 +277,15 @@ fun CryptoDetailInfoGrid(crypto: CryptoCurrencyItem, selectedCurrency: Currency)
         item {
             DetailCard(
                 label = AppConstants.ATH,
-                value = crypto.marketData?.ath.getDoubleFormattedValue(selectedCurrency.symbol).formatWithCurrency(selectedCurrency.symbol.uppercase())
+                value = crypto.marketData?.ath.getDoubleFormattedValue(selectedCurrency.symbol)
+                    .formatWithCurrency(selectedCurrency.symbol.uppercase())
             )
         }
         item {
             DetailCard(
                 label = AppConstants.ATL,
-                value = crypto.marketData?.atl.getDoubleFormattedValue(selectedCurrency.symbol).formatWithCurrency(selectedCurrency.symbol.uppercase())
+                value = crypto.marketData?.atl.getDoubleFormattedValue(selectedCurrency.symbol)
+                    .formatWithCurrency(selectedCurrency.symbol.uppercase())
             )
         }
     }

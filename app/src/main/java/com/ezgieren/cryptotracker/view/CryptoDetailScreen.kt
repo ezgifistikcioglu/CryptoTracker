@@ -44,11 +44,13 @@ fun CryptoDetailScreen(
                     CryptoDetailContent(it, selectedCurrency)
                 }
             }
+
             is Resource.Error -> {
                 RetryView(cryptoCurrencyItem.message!!) {
                     navController.popBackStack()
                 }
             }
+
             is Resource.Loading -> {
                 CustomBox(
                     modifier = Modifier.fillMaxSize(),

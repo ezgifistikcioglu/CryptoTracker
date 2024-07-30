@@ -21,5 +21,9 @@ fun CustomBox(
 
 @Composable
 fun BoxScope.CenteredContent(content: @Composable BoxScope.() -> Unit) {
-    Box(contentAlignment = Alignment.Center, modifier = Modifier.paddingNormal2x(), content = content)
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.paddingNormal2x(),
+        content = content
+    )
 }

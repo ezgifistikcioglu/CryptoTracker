@@ -43,7 +43,8 @@ fun Modifier.paddingXSmall() = this.padding(AppPadding.xSmallPadding)
 fun Modifier.paddingNormal2x() = this.padding(AppPadding.normal2xPadding)
 fun Modifier.paddingSymmetric() = this.then(AppPadding.symmetricPadding)
 
-fun Double?.toFormattedString(): String = this?.let { String.format("%.2f", it) } ?: AppConstants.UNKNOWN_TEXT
+fun Double?.toFormattedString(): String =
+    this?.let { String.format("%.2f", it) } ?: AppConstants.UNKNOWN_TEXT
 
 fun Map<String, Double>?.getDoubleFormattedValue(key: String): String =
     this?.get(key.lowercase())?.toFormattedString() ?: AppConstants.UNKNOWN_TEXT
@@ -88,18 +89,33 @@ fun AppBar(
     onHomeClick: (() -> Unit)? = null
 ) {
     TopAppBar(
-        title = { CustomText(text = title, color = OnPrimaryColor, fontWeight = FontWeight.Bold, fontSize = 20.sp) },
+        title = {
+            CustomText(
+                text = title,
+                color = OnPrimaryColor,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp
+            )
+        },
         navigationIcon = {
             onBackClick?.let {
                 IconButton(onClick = it) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = AppConstants.BACK_BUTTON, tint = OnPrimaryColor)
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = AppConstants.BACK_BUTTON,
+                        tint = OnPrimaryColor
+                    )
                 }
             }
         },
         actions = {
             onHomeClick?.let {
                 IconButton(onClick = it) {
-                    Icon(Icons.Default.Home, contentDescription = AppConstants.HOME_BUTTON, tint = OnPrimaryColor)
+                    Icon(
+                        Icons.Default.Home,
+                        contentDescription = AppConstants.HOME_BUTTON,
+                        tint = OnPrimaryColor
+                    )
                 }
             }
         },

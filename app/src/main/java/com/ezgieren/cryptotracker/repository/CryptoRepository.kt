@@ -2,7 +2,6 @@ package com.ezgieren.cryptotracker.repository
 
 import com.ezgieren.cryptotracker.model.CryptoCurrencyItem
 import com.ezgieren.cryptotracker.service.CoinGeckoApiService
-import com.ezgieren.cryptotracker.util.Currency
 import com.ezgieren.cryptotracker.util.Resource
 import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject

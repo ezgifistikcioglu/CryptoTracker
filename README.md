@@ -132,3 +132,8 @@ The project follows the MVVM (Model-View-ViewModel) architecture pattern to sepa
 3. **Build and Run:**
    - Ensure you have a valid internet connection for fetching real-time data from the API.
    - Build the project and run it on an emulator or a physical device.
+  
+## References
+
+- [IA31-CryptoCrazyCompose](https://github.com/atilsamancioglu/IA31-CryptoCrazyCompose): A reference project for building a cryptocurrency app using Jetpack Compose.
+- [Flutter Ready to Use Widgets](https://github.com/VB10/flutter-ready-to-use-widgets): A collection of ready-to-use Flutter widgets.

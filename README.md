@@ -79,6 +79,7 @@ Crypto Tracker is an Android application designed to track and display real-time
 The project follows the MVVM (Model-View-ViewModel) architecture pattern to separate concerns and improve testability and maintainability.
 
 ### Directory Structure
+ ```
 .
 ├── data
 │   ├── api
@@ -110,7 +111,7 @@ The project follows the MVVM (Model-View-ViewModel) architecture pattern to sepa
 └── viewmodel
 ├── CryptoDetailViewModel.kt
 └── CryptoListViewModel.kt
-
+ ```
 ### Key Components
 
 - **CoinGeckoApiService.kt**: Defines the API endpoints and methods for fetching cryptocurrency data from CoinGecko.
